@@ -1,0 +1,13 @@
+# Uninstalls  everything that's like the string entered into the $z variable where possible. I.e. entering autodesk will remove all autodesk products.
+
+
+$z=read-host "enter software name"
+$x=get-wmiobject Win32_Product | Where-Object Name -like ("*"+$z+"*")
+write-host $x
+
+foreach ($i in $x){
+    write-host $i
+    $app=$i  | Select-Object IdentifyingNumber -ExpandProperty IdentifyingNumber
+    $a= '/x '+$app+' /NORESTART /q'
+    start-process "msiexec.exe" -argumentlist $a -wait
+}
