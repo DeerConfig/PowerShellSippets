@@ -1,0 +1,36 @@
+$x=get-wmiobject Win32_Product
+write-host $x
+$applicationlist=@()
+foreach ($i in $x){
+    write-host $i
+    $app=$i  | Select-Object name, IdentifyingNumber
+    $applicationlist=$applicationlist+$app
+}
+cls
+$n=0
+foreach ($i in $applicationlist){
+    write-host $n "|" $i.name
+    $n++
+}
+$selecteditems=@()
+$selectionloop="y"
+Write-Host "enter the number that corresponds to the application you want to remove"
+while ($selectionloop -eq "y"){
+    $selectedapp=Read-Host
+    $selecteditems=$selecteditems+$selectedapp
+    $selectionloop= Read-Host "Add another? y/n "
+
+}
+
+foreach ($z in $selecteditems){
+    Write-Host $applicationlist[$z].name
+}
+$confirm = Read-Host "is the above correct? Y/N"
+if ($confirm -eq "y"){
+    foreach ($u in $selecteditems){
+        $app= $applicationlist[$u].IdentifyingNumber
+        $a= '/x '+$app+' /NORESTART /q'
+        start-process "msiexec.exe" -argumentlist $a -wait
+    }
+
+}
